@@ -8,6 +8,7 @@ namespace DigitalMusicLibrary.Models
         [Key]
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Artist name is required")]
         public string Name { get; set; }
 
         [NotMapped]

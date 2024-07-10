@@ -8,8 +8,10 @@ namespace DigitalMusicLibrary.Models
         [Key]
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Song title is required")]
         public string Title { get; set; }
 
+        [Required(ErrorMessage = "Song length is required")]
         public string Length { get; set; }
 
         public int AlbumId { get; set; }
