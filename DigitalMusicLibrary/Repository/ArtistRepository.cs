@@ -56,13 +56,39 @@ namespace DigitalMusicLibrary.Repository
         public async Task<List<Artist>> SearchAsync(string searchTerm)
         {
             searchTerm = searchTerm.ToLower();
-            return await _context.Artists
-                .Where(a => a.Name.ToLower().Contains(searchTerm) ||
-                            a.Albums.Any(al => al.Title.ToLower().Contains(searchTerm) ||
-                                               al.Songs.Any(s => s.Title.ToLower().Contains(searchTerm))))
+
+            var query = _context.Artists
                 .Include(a => a.Albums)
                 .ThenInclude(al => al.Songs)
-                .ToListAsync();
+                .AsQueryable();
+
+            var result = await query.Where(a =>
+                a.Name.ToLower().Contains(searchTerm) ||
+                a.Albums.Any(al => al.Title.ToLower().Contains(searchTerm)) ||
+                a.Albums.Any(al => al.Songs.Any(s => s.Title.ToLower().Contains(searchTerm)))
+            ).ToListAsync();
+
+            return result.Select(artist => new Artist
+            {
+                Id = artist.Id,
+                Name = artist.Name,
+                Albums = artist.Albums.Where(album =>
+                    artist.Name.ToLower().Contains(searchTerm) ||
+                    album.Title.ToLower().Contains(searchTerm) ||
+                    album.Songs.Any(song => song.Title.ToLower().Contains(searchTerm))
+                ).Select(album => new Album
+                {
+                    Id = album.Id,
+                    Title = album.Title,
+                    Description = album.Description,
+                    ArtistId = album.ArtistId,
+                    Songs = album.Songs.Where(song =>
+                        artist.Name.ToLower().Contains(searchTerm) ||
+                        album.Title.ToLower().Contains(searchTerm) ||
+                        song.Title.ToLower().Contains(searchTerm)
+                    ).ToList()
+                }).ToList()
+            }).ToList();
         }
 
         public async Task<bool> UpdateArtistAsync(int id, Artist artist)

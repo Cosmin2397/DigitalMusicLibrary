@@ -1,32 +1,49 @@
 ﻿using DigitalMusicLibrary.Models;
+using DigitalMusicLibrary.Repository;
 
 namespace DigitalMusicLibrary.Services
 {
     public class ArtistService : IArtistService
     {
-        private readonly
-        public ArtistService()
+        private readonly IArtistRepository _artistRepository;
+
+        public ArtistService(IArtistRepository artistRepository)
         {
-            
+            _artistRepository = artistRepository;
         }
+
         public Task<bool> DeleteArtistAsync(int id)
         {
-            throw new NotImplementedException();
+            return _artistRepository.DeleteArtistAsync(id);
         }
 
-        public Task<IEnumerable<Artist>> GetArtists()
+        public async Task<IEnumerable<Artist>> GetArtists()
         {
-            throw new NotImplementedException();
+            return await _artistRepository.GetArtists();
         }
 
-        public Task<List<Artist>> SearchAsync(string searchTerm)
+        public async Task<List<Artist>> SearchAsync(string searchTerm)
         {
-            throw new NotImplementedException();
+            if (searchTerm.Count() == 0)
+            {
+                return await Task.FromResult(new List<Artist>());
+            }
+            else
+            {
+                return await _artistRepository.SearchAsync(searchTerm);
+            }
+
         }
 
-        public Task<bool> UpdateArtistAsync(int id, Artist artist)
+        public async Task<bool> UpdateArtistAsync(int id, Artist artist)
         {
-            throw new NotImplementedException();
+            if (!(artist.Name.Length > 0))
+             {
+                return false;
+            }
+
+            return await _artistRepository.UpdateArtistAsync(id, artist);
+
         }
     }
 }
