@@ -2,41 +2,58 @@
 @using DigitalMusicLibrary.Services
 @inject NavigationManager NavigationManager
 @inject IArtistService ArtistService
+@rendermode InteractiveServer
 
-<div class="card mb-4">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h3>@Artist.Name</h3>
-        <div>
-            <button class="btn btn-primary btn-sm me-2" @onclick="() => NavigateToUpdate(Artist.Id)">Update</button>
-            <button class="btn btn-danger btn-sm" @onclick="() => DeleteArtist(Artist.Id)">Delete</button>
+@if (searchResults.Any())
+{
+    @foreach (var artist in searchResults)
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h3>@artist.Name</h3>
+                <div>
+                    <button class="btn btn-primary btn-sm me-2" @onclick="() => NavigateToUpdate(artist.Id)">Update</button>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteArtist(artist.Id)">Delete</button>
+                </div>
+            </div>
+            <div class="card-body">
+                @foreach (var album in artist.Albums)
+                {
+                    <AlbumComponent Album="@album" />
+                }
+            </div>
         </div>
-    </div>
-    <div class="card-body">
-        @foreach (var album in Artist.Albums)
-        {
-            <AlbumComponent Album="@album" />
-        }
-    </div>
-</div>
+    }
+}
+else
+{
+    <p>No artists found.</p>
+}
 
 @code {
     [Parameter]
-    public Artist Artist { get; set; }
+    public List<Artist> searchResults { get; set; } = new List<Artist>();
 
     [Parameter]
     public EventCallback OnArtistDeleted { get; set; }
 
-    private void NavigateToUpdate(int id)
-    {
-        NavigationManager.NavigateTo($"/updateartist/{id}");
-    }
+    [Parameter]
+    public EventCallback<int> OnNavigateToUpdate { get; set; }
 
     private async Task DeleteArtist(int id)
     {
         if (await ArtistService.DeleteArtistAsync(id))
         {
+            searchResults = searchResults.Where(a => a.Id != id).ToList();
             await OnArtistDeleted.InvokeAsync();
         }
     }
+
+    private void NavigateToUpdate(int id)
+    {
+        OnNavigateToUpdate.InvokeAsync(id);
+    }
 }
+
+
 

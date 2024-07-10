@@ -1,0 +1,99 @@
+﻿@page "/addartist"
+@using DigitalMusicLibrary.Models
+@using DigitalMusicLibrary.Services
+@inject IArtistService ArtistService
+@inject NavigationManager NavigationManager
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">Add New Artist</h2>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@newArtist" OnValidSubmit="HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="mb-3">
+                            <label for="artistName" class="form-label">Artist Name:</label>
+                            <InputText id="artistName" @bind-Value="newArtist.Name" class="form-control" required />
+                            <ValidationMessage For="@(() => newArtist.Name)" />
+                        </div>
+
+                        <h3 class="mt-4 mb-3">Albums</h3>
+                        @foreach (var album in newArtist.Albums)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Album Title:</label>
+                                        <InputText @bind-Value="album.Title" class="form-control" required />
+                                        <ValidationMessage For="@(() => album.Title)" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Album Description:</label>
+                                        <InputTextArea @bind-Value="album.Description" class="form-control" rows="3" required />
+                                        <ValidationMessage For="@(() => album.Description)" />
+                                    </div>
+
+                                    <h4 class="mt-3 mb-2">Songs</h4>
+                                    @foreach (var song in album.Songs)
+                                    {
+                                        <div class="card mb-2">
+                                            <div class="card-body">
+                                                <div class="mb-2">
+                                                    <label class="form-label">Song Title:</label>
+                                                    <InputText @bind-Value="song.Title" class="form-control" required />
+                                                    <ValidationMessage For="@(() => song.Title)" />
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label">Song Length:</label>
+                                                    <InputText @bind-Value="song.Length" class="form-control" required />
+                                                    <ValidationMessage For="@(() => song.Length)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <button type="button" class="btn btn-secondary btn-sm mt-2" @onclick="() => AddSong(album)">Add Song</button>
+                                </div>
+                            </div>
+                        }
+                        <button type="button" class="btn btn-secondary mb-3" @onclick="AddAlbum">Add Album</button>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success">Save Artist</button>
+                            <button type="button" class="btn btn-secondary ms-2" @onclick="NavigateBack">Cancel</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private Artist newArtist = new Artist { Albums = new List<Album>() };
+
+    private async Task HandleValidSubmit()
+    {
+        await ArtistService.AddArtistAsync(newArtist);
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void AddAlbum()
+    {
+        newArtist.Albums.Add(new Album { Title = "", Description = "", Songs = new List<Song>() });
+    }
+
+    private void AddSong(Album album)
+    {
+        album.Songs.Add(new Song { Title = "", Length = "" });
+    }
+}
