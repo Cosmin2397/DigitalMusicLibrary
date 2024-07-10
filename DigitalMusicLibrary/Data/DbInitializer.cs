@@ -1,4 +1,5 @@
 ﻿using DigitalMusicLibrary.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 
 namespace DigitalMusicLibrary.Data
@@ -10,40 +11,33 @@ namespace DigitalMusicLibrary.Data
         {
             if (context.Artists.Any())
             {
-                return;  
+                return;   // DB has been seeded
             }
 
             var json = File.ReadAllText("C:/Users/Cosmin Moisa/Desktop/data.json");
-            var artists = JsonConvert.DeserializeObject<List<Artist>>(json);
+            var artistData = JsonConvert.DeserializeObject<List<Artist>>(json);
 
-            int artistId = 1, albumId = 1, songId = 1;
-            try
+            foreach (var artistDataItem in artistData)
             {
-                foreach (var artist in artists)
+                var artist = new Artist
                 {
-                    artist.Id = artistId++;
-                    foreach (var album in artist.Albums)
+                    Name = artistDataItem.Name,
+                    Albums = artistDataItem.Albums.Select(albumData => new Album
                     {
-                        album.ArtistId = artist.Id;
-                        album.Id = albumId++;
-                        foreach (var song in album.Songs)
+                        Title = albumData.Title,
+                        Description = albumData.Description,
+                        Songs = albumData.Songs.Select(songData => new Song
                         {
-                            song.AlbumId = album.Id;
-                            song.Id = songId++;
-                            context.Songs.Add(song);
-                        }
-                        context.Albums.Add(album);
-                    }
-                    context.Artists.Add(artist);
-                }
+                            Title = songData.Title,
+                            Length = songData.Length
+                        }).ToList()
+                    }).ToList()
+                };
 
-                context.SaveChanges();
+                context.Artists.Add(artist);
             }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+
+            context.SaveChanges();
         }
     }
-
 }
