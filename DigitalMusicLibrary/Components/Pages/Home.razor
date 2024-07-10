@@ -18,17 +18,7 @@
     {
         @foreach (var artist in searchResults)
         {
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h3>@artist.Name</h3>
-                </div>
-                <div class="card-body">
-                    @foreach (var album in artist.Albums)
-                    {
-                        <AlbumComponent album=@album/>
-                    }
-                </div>
-            </div>
+           <ArtistComponent artist=@artist/>
         }
     }
     else

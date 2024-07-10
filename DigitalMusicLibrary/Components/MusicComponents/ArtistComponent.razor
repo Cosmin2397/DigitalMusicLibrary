@@ -1,0 +1,19 @@
+﻿@using DigitalMusicLibrary.Models
+
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h3>@artist.Name</h3>
+    </div>
+    <div class="card-body">
+        @foreach (var album in artist.Albums)
+        {
+            <AlbumComponent album=@album />
+        }
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Artist artist { get; set; }
+}
+
+
