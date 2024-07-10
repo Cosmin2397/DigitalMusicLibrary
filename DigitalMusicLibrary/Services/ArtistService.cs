@@ -2,6 +2,7 @@
 using DigitalMusicLibrary.Repository;
 using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel;
 using System.Data;
@@ -61,6 +62,19 @@ namespace DigitalMusicLibrary.Services
 
             return await _artistRepository.UpdateArtistAsync(id, artist);
 
+        }
+
+        public async Task<bool> AddArtistAsync(Artist artist)
+        {
+            try
+            {
+                return await _artistRepository.AddArtistAsync(artist);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return false;
         }
     }
 }

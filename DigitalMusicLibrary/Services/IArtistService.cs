@@ -13,5 +13,7 @@ namespace DigitalMusicLibrary.Services
         Task<bool> UpdateArtistAsync(int id, Artist artist);
 
         Task<bool> DeleteArtistAsync(int id);
+
+        Task<bool> AddArtistAsync(Artist artist);
     }
 }

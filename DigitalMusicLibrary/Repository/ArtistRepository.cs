@@ -135,6 +135,19 @@ namespace DigitalMusicLibrary.Repository
             }
         }
 
+        public async Task<bool> AddArtistAsync(Artist artist)
+        {
+            if (artist == null)
+            {
+                return false;
+            }
+            else
+            {
+                await _context.Artists.AddAsync(artist);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+        }
 
         public bool ArtistExists(int id)
         {

@@ -12,6 +12,8 @@ namespace DigitalMusicLibrary.Repository
 
         Task<bool> UpdateArtistAsync(int id, Artist artist);
 
+        Task<bool> AddArtistAsync(Artist artist);
+
         Task<bool> DeleteArtistAsync(int id);
     }
 }
