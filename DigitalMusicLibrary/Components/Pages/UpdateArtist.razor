@@ -1,0 +1,131 @@
+﻿@page "/updateartist/{Id:int}"
+@using DigitalMusicLibrary.Models
+@using DigitalMusicLibrary.Services
+@inject IArtistService ArtistService
+@inject NavigationManager NavigationManager
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Update Artist</h2>
+                </div>
+                <div class="card-body">
+                    @if (artist != null)
+                    {
+                        <EditForm Model="@artist" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="mb-3">
+                                <label for="artistName" class="form-label">Artist Name:</label>
+                                <InputText id="artistName" @bind-Value="artist.Name" class="form-control" />
+                            </div>
+
+                            <h3 class="mt-4 mb-3">Albums</h3>
+                            @foreach (var album in artist.Albums.ToList())
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h4 class="mb-0">Album Details</h4>
+                                            <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveAlbum(album)">Remove Album</button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Album Title:</label>
+                                            <InputText @bind-Value="album.Title" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Album Description:</label>
+                                            <InputTextArea @bind-Value="album.Description" class="form-control" rows="3" />
+                                        </div>
+
+                                        <h5 class="mt-4 mb-3">Songs</h5>
+                                        @foreach (var song in album.Songs.ToList())
+                                        {
+                                            <div class="card mb-2">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <h6 class="mb-0">Song Details</h6>
+                                                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => RemoveSong(album, song)">Remove Song</button>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Song Title:</label>
+                                                        <InputText @bind-Value="song.Title" class="form-control" />
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label">Song Length:</label>
+                                                        <InputText @bind-Value="song.Length" class="form-control" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <button type="button" class="btn btn-success btn-sm mt-2" @onclick="() => AddSong(album)">Add Song</button>
+                                    </div>
+                                </div>
+                            }
+                            <button type="button" class="btn btn-success mb-3" @onclick="AddAlbum">Add Album</button>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="button" class="btn btn-secondary ms-2" @onclick="NavigateBack">Cancel</button>
+                            </div>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading artist data...</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Artist artist;
+
+    protected override async Task OnInitializedAsync()
+    {
+        artist = await ArtistService.GetArtistByIdAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await ArtistService.UpdateArtistAsync(Id, artist);
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void RemoveAlbum(Album album)
+    {
+        artist.Albums.Remove(album);
+    }
+
+    private void RemoveSong(Album album, Song song)
+    {
+        album.Songs.Remove(song);
+    }
+
+    private void AddAlbum()
+    {
+        artist.Albums.Add(new Album { Title = "New Album", Songs = new List<Song>() });
+    }
+
+    private void AddSong(Album album)
+    {
+        album.Songs.Add(new Song { Title = "New Song", Length = "0:00" });
+    }
+}

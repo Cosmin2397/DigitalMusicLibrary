@@ -56,6 +56,24 @@ namespace DigitalMusicLibrary.Repository
             return null;
         }
 
+        public async Task<Artist> GetArtistByIdAsync(int id)
+        {
+            try
+            {
+                Artist artist = await _context.Artists
+                    .Include(a => a.Albums)
+                        .ThenInclude(album => album.Songs)
+                    .FirstOrDefaultAsync(a => a.Id == id);
+
+                return artist;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while fetching the artist: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<List<Artist>> SearchAsync(string searchTerm)
         {
             searchTerm = searchTerm.ToLower();

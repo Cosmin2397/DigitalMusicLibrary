@@ -6,6 +6,8 @@ namespace DigitalMusicLibrary.Services
     {
         Task<IEnumerable<Artist>> GetArtists();
 
+        Task<Artist> GetArtistByIdAsync(int id);
+
         Task<List<Artist>> SearchAsync(string searchTerm);
 
         Task<bool> UpdateArtistAsync(int id, Artist artist);

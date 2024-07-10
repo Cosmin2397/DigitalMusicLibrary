@@ -1,6 +1,10 @@
 ﻿using DigitalMusicLibrary.Models;
 using DigitalMusicLibrary.Repository;
+using Microsoft.EntityFrameworkCore.Scaffolding;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel;
+using System.Data;
 
 namespace DigitalMusicLibrary.Services
 {
@@ -21,6 +25,18 @@ namespace DigitalMusicLibrary.Services
         public async Task<IEnumerable<Artist>> GetArtists()
         {
             return await _artistRepository.GetArtists();
+        }
+
+        public async Task<Artist> GetArtistByIdAsync(int id)
+        {
+            if(id == 0)
+            {
+                return new Artist();
+            }
+            else
+            {
+                return await _artistRepository.GetArtistByIdAsync(id);
+            }
         }
 
         public async Task<List<Artist>> SearchAsync(string searchTerm)
