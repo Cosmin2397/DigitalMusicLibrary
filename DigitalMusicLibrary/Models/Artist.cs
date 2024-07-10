@@ -3,15 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DigitalMusicLibrary.Models
 {
-    public class Song
+    public class Artist
     {
         [Key]
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string Name { get; set; }
 
-        public string Length { get; set; }
-
-        public int AlbumId { get; set; }
+        [NotMapped]
+        public List<Album> Albums { get; set; }
     }
 }
