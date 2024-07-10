@@ -25,32 +25,7 @@
                 <div class="card-body">
                     @foreach (var album in artist.Albums)
                     {
-                        <div class="mb-3">
-                            <h4 class="mb-2">Album title: @album.Title</h4>
-                            <p class="mb-2">Description: @album.Description</p>
-                            <button class="btn btn-sm btn-outline-dark mb-2" @onclick="() => ToggleAlbumSongs(album)">
-                                @(album.ShowSongs ? "Hide Songs" : "Show Songs")
-                            </button>
-                            @if (album.ShowSongs)
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Length</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var song in album.Songs)
-                                            {
-                                                <SongComponent song=@song></SongComponent>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                        </div>
+                        <AlbumComponent album=@album/>
                     }
                 </div>
             </div>
@@ -81,8 +56,5 @@
         searchResults = await ArtistService.SearchAsync(searchTerm);
     }
 
-    private void ToggleAlbumSongs(Album album)
-    {
-        album.ShowSongs = !album.ShowSongs;
-    }
+
 }
