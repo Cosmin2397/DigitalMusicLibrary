@@ -1,0 +1,11 @@
+﻿@using DigitalMusicLibrary.Models
+
+<tr>
+    <td>@song.Title</td>
+    <td>@song.Length</td>
+</tr>
+
+@code {
+    [Parameter]
+    public Song song { get; set; }
+}

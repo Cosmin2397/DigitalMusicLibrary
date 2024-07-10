@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using DigitalMusicLibrary.Components.MusicComponents
 @using DigitalMusicLibrary.Models
 @using DigitalMusicLibrary.Services
 @inject IArtistService ArtistService
@@ -43,10 +44,7 @@
                                         <tbody>
                                             @foreach (var song in album.Songs)
                                             {
-                                                <tr>
-                                                    <td>@song.Title</td>
-                                                    <td>@song.Length</td>
-                                                </tr>
+                                                <SongComponent song=@song></SongComponent>
                                             }
                                         </tbody>
                                     </table>
