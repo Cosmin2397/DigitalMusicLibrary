@@ -43,7 +43,10 @@ namespace DigitalMusicLibrary.Repository
         {
             try
             {
-                return await _context.Artists.ToListAsync();
+                return await _context.Artists
+                .Include(a => a.Albums)
+                .ThenInclude(album => album.Songs)
+                .ToListAsync();
             }
             catch (Exception ex)
             {

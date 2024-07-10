@@ -16,5 +16,8 @@ namespace DigitalMusicLibrary.Models
 
         [NotMapped]
         public List<Song> Songs { get; set; }
+
+        [NotMapped]
+        public bool ShowSongs { get; set; }
     }
 }

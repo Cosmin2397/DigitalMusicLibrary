@@ -1,5 +1,6 @@
 ﻿using DigitalMusicLibrary.Models;
 using DigitalMusicLibrary.Repository;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DigitalMusicLibrary.Services
 {
@@ -24,9 +25,9 @@ namespace DigitalMusicLibrary.Services
 
         public async Task<List<Artist>> SearchAsync(string searchTerm)
         {
-            if (searchTerm.Count() == 0)
+            if (string.IsNullOrEmpty(searchTerm))
             {
-                return await Task.FromResult(new List<Artist>());
+                return (List<Artist>)await _artistRepository.GetArtists();
             }
             else
             {
